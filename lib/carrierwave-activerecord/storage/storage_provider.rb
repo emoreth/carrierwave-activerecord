@@ -1,6 +1,6 @@
 module CarrierWave
   module Storage
-    module ActiveRecord 
+    module ActiveRecord
 
       class StorageProvider
 
@@ -11,7 +11,7 @@ module CarrierWave
         end
 
         def store! sanitized_file
-          @file = File.create! sanitized_file, uploader.identifier
+          @file = File.create! @uploader, sanitized_file, uploader.identifier
           set_file_properties
         end
 
@@ -44,7 +44,7 @@ module CarrierWave
         end
 
         def compute_url
-          uploader.default_url || uploader.url || begin
+          @url ||= uploader.default_url || uploader.url || begin
             if defined? ::Rails.application.routes.url_helpers
               model = uploader.model
 
