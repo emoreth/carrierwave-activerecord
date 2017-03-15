@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module CarrierWave 
+module CarrierWave
   module Storage
     module ActiveRecord
 
@@ -25,7 +25,7 @@ module CarrierWave
         let(:file_properties) { { original_filename: 'o_sample.png',
                                   content_type:      'image/png',
                                   size:              123,
-                                  data:              'File content.',
+                                  binary:            'File content.',
                                   read:              'File content.' } }
 
         let(:mock_rails_url_helpers) do
@@ -59,7 +59,7 @@ module CarrierWave
           its(:url) { should eq storage_provider_url }
 
           it 'should create a File instance' do
-            File.should_receive(:create!).with(file, identifier).and_call_original
+            File.should_receive(:create!).with(uploader, file, identifier).and_call_original
             storage.store! file
           end
 

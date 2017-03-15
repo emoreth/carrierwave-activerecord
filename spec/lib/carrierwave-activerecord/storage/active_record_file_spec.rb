@@ -26,7 +26,7 @@ module CarrierWave
                                   :original_filename,
                                   :content_type,
                                   :size,
-                                  :data,
+                                  :binary,
                                   :delete,
                                   :read ]
           ActiveRecordFile.new.should respond_to *required_attributes

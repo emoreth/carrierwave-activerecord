@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-module CarrierWave 
+module CarrierWave
   module Storage
-    module ActiveRecord 
+    module ActiveRecord
 
       describe File do
 
@@ -11,17 +11,27 @@ module CarrierWave
         it { should respond_to(:content_type, :content_type=) }       # Uploader::Base::MimeTypes
         it { should respond_to(:destroy!) }                           # Uploader::Base::RMagick
         it { should respond_to(:original_filename, :size) }           # CarrierWave::SanitizedFile
-
         it { should respond_to(:filename) }                            # A convenience method.
+
+        let(:uploader) do
+          Class.new(CarrierWave::Uploader::Base) do
+            configure do |config|
+              storage_provider_class = 'CarrierWave::Storage::ActiveRecord::StorageProvider'
+              config.storage_engines[:active_record] = storage_provider_class
+            end
+            storage :active_record
+          end.new
+        end
 
         let(:provider_file_class) { ::CarrierWave::Storage::ActiveRecord::File }
         let(:identifier)          { '/uploads/sample.png' }
-        let(:active_record_file)  { mock 'ActiveRecordFile stored.', file_properties.merge(save!: nil) }
+        let(:active_record_file)  { mock 'ActiveRecordFile stored.', file_properties.merge(save!: nil, update_attributes: nil) }
         let(:file_to_store)       { mock 'File to store.',           file_properties.merge(save!: nil) }
         let(:file_properties)     { { original_filename: 'o_sample.png',
                                       content_type:      'image/png',
+                                      medium_hash:      '/uploads/sample.png',
                                       size:              123,
-                                      data:              'File content.',
+                                      binary:            'File content.',
                                       read:              'File content.' } }
 
         before(:each) { CarrierWave::Storage::ActiveRecord::File.delete_all }
@@ -30,27 +40,27 @@ module CarrierWave
 
           it 'should create an ActiveRecordFile instance' do
             ActiveRecordFile.should_receive(:new).and_return(active_record_file)
-            File.create!(file_to_store, identifier)
+            File.create!(uploader, file_to_store, identifier)
           end
 
           it 'should return a File instance' do
             ActiveRecordFile.should_receive(:new).and_return(active_record_file)
-            stored_file = File.create!(file_to_store, identifier)
+            stored_file = File.create!(uploader, file_to_store, identifier)
             stored_file.should be_instance_of File
           end
 
           it 'should return a File instance with an associated ActiveRecordFile instance' do
             ActiveRecordFile.stub(new: active_record_file)
-            stored_file = File.create!(file_to_store, identifier)
+            stored_file = File.create!(uploader, file_to_store, identifier)
             stored_file.file.should eq active_record_file
           end
 
           it 'should create a record in the database' do
-            expect { File.create!(file_to_store, identifier) }.to change(ActiveRecordFile, :count).by(1)
+            expect { File.create!(uploader, file_to_store, identifier) }.to change(ActiveRecordFile, :count).by(1)
           end
 
           it 'should initialize the file instance' do
-            stored_file = File.create!(file_to_store, identifier)
+            stored_file = File.create!(uploader, file_to_store, identifier)
 
             file_properties.each do |property, value|
               stored_file.file.send(property).should eq value
@@ -58,7 +68,7 @@ module CarrierWave
           end
 
           it 'should set the identifier on the file' do
-            stored_file = File.create!(file_to_store, identifier).file
+            stored_file = File.create!(uploader, file_to_store, identifier).file
             stored_file.identifier.should eq identifier
           end
         end
@@ -102,8 +112,9 @@ module CarrierWave
 
             let(:identifier) { 'non-existent-identifier' }
 
-            it 'raises an error' do
-              expect { File.fetch! identifier }.to raise_error(::ActiveRecord::RecordNotFound)
+            it 'returns nil if file not found' do
+              file = File.fetch!(identifier)
+              expect(file.file).to eq(nil)
             end
           end
         end

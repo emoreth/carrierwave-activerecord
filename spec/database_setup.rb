@@ -5,9 +5,12 @@ ActiveRecord::Schema.define do
 
     t.string  :identifier
     t.string  :original_filename
+    t.string  :medium_hash
+    t.binary  :binary
     t.string  :content_type
     t.integer :size
-    t.binary  :data
+    t.integer :foreign_id
+    t.integer :foreign_class
 
     t.timestamps
   end

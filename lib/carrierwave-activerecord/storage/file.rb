@@ -4,14 +4,26 @@ module CarrierWave
 
       class File
 
-        def self.create!(new_file, identifier)
-          attributes = { :medium_hash       => identifier,
-                         :binary            => new_file.read }
+        def self.create!(uploader, new_file, identifier)
+          attributes = {
+            :medium_hash       => identifier,
+            :original_filename => new_file.original_filename,
+            :content_type      => new_file.content_type,
+            :size              => new_file.size,
+            :binary            => new_file.read
+          }
+
+          if uploader.model
+            attributes.merge!({
+              foreign_id:    uploader.model.id,
+              foreign_class_name: uploader.model.class.to_s
+            })
+          end
 
           record = ActiveRecordFile.where(medium_hash: identifier).first
           record = ActiveRecordFile.new if record.blank?
           record.update_attributes(attributes)
-  
+
           self.new record
         end
 
@@ -42,7 +54,7 @@ module CarrierWave
         def size
           file.size if file
         end
-        
+
         def extension
           file.identifier.split('.').last if file
         end
@@ -75,6 +87,14 @@ module CarrierWave
           end
         end
         alias_method :destroy!, :delete
+
+        def foreign_id
+          @file.foreign_id
+        end
+
+        def foreign_class_name
+          @file.foreign_class_name
+        end
 
       end # File
 
