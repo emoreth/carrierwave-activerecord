@@ -48,7 +48,7 @@ module CarrierWave
         end
 
         def exists?
-          file.binary.present?
+          file && file.binary.present?
         end
 
         def read
