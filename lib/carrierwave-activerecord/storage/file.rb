@@ -47,6 +47,10 @@ module CarrierWave
           file.nil?
         end
 
+        def exists?
+          file && file.binary.present?
+        end
+
         def read
           file.binary if file
         end
