@@ -22,7 +22,7 @@ module CarrierWave
 
           record = ActiveRecordFile.where(medium_hash: identifier).first
           record = ActiveRecordFile.new if record.blank?
-          record.update_attributes(attributes)
+          record.update(attributes)
 
           self.new record
         end

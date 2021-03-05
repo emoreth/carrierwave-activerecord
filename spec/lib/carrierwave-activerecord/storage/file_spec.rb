@@ -25,7 +25,7 @@ module CarrierWave
 
         let(:provider_file_class) { ::CarrierWave::Storage::ActiveRecord::File }
         let(:identifier)          { '/uploads/sample.png' }
-        let(:active_record_file)  { mock 'ActiveRecordFile stored.', file_properties.merge(save!: nil, update_attributes: nil) }
+        let(:active_record_file)  { mock 'ActiveRecordFile stored.', file_properties.merge(save!: nil, update: nil) }
         let(:file_to_store)       { mock 'File to store.',           file_properties.merge(save!: nil) }
         let(:file_properties)     { { original_filename: 'o_sample.png',
                                       content_type:      'image/png',
