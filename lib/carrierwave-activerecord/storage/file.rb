@@ -4,14 +4,14 @@ module CarrierWave
 
       class File
 
-        def self.create!(new_file, identifier)
+        def self.create!(uploader, new_file, identifier)
           attributes = { :medium_hash       => identifier,
                          :binary            => new_file.read }
 
           record = ActiveRecordFile.where(medium_hash: identifier).first
           record = ActiveRecordFile.new if record.blank?
-          record.update_attributes(attributes)
-  
+          record.update(attributes)
+
           self.new record
         end
 
@@ -35,6 +35,10 @@ module CarrierWave
           file.nil?
         end
 
+        def exists?
+          file && file.binary.present?
+        end
+
         def read
           file.binary if file
         end
@@ -42,7 +46,7 @@ module CarrierWave
         def size
           file.size if file
         end
-        
+
         def extension
           file.identifier.split('.').last if file
         end

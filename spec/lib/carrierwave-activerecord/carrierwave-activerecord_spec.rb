@@ -18,11 +18,11 @@ describe 'carrierwave-activerecord' do
 
   describe 'configuration defaults' do
     it 'sets "/files" as default download path prefix' do
-      uploader_class.download_path_prefix.should eq '/files'
+      expect(uploader_class.download_path_prefix).to eq '/files'
     end
 
     it 'sets "carrier_wave_files" as default ActiveRecord table' do
-      uploader_class.active_record_tablename.should eq 'carrier_wave_files'
+      expect(uploader_class.active_record_tablename).to eq 'carrier_wave_files'
     end
   end
 
@@ -33,12 +33,12 @@ describe 'carrierwave-activerecord' do
 
     it 'can set a download path prefix' do
       expect { set_alternate_download_url_prefix }.to_not raise_error
-      uploader_class.download_path_prefix.should eq '/images'
+      expect(uploader_class.download_path_prefix).to eq '/images'
     end
 
     it 'can set a custom table name' do
       expect { set_custom_table_name }.to_not raise_error
-      uploader_class.active_record_tablename.should eq 'custom_table_name'
+      expect(uploader_class.active_record_tablename).to eq 'custom_table_name'
     end
   end
 
@@ -47,7 +47,7 @@ describe 'carrierwave-activerecord' do
       set_alternate_download_url_prefix
 
       uploader_class.reset_config
-      uploader_class.download_path_prefix.should eq '/files'
+      expect(uploader_class.download_path_prefix).to eq '/files'
     end
   end
 
