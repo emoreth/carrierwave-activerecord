@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     carrierwave-activerecord (0.1.0rc18)
-      activerecord (>= 4.1)
+      activerecord (~> 6.1)
       carrierwave (>= 0.10.0)
 
 GEM

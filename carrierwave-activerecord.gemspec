@@ -39,7 +39,7 @@ Gem::Specification.new do |gem|
 
   # CarrierWave has broken in 0.x releases.
   gem.add_runtime_dependency 'carrierwave', '>= 0.10.0'
-  gem.add_runtime_dependency 'activerecord', '>= 4.1'
+  gem.add_runtime_dependency 'activerecord', '~> 6.1'
 
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'rspec'
