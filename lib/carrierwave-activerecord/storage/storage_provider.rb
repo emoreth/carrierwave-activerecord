@@ -11,7 +11,7 @@ module CarrierWave
         end
 
         def store! sanitized_file
-          @file = File.create! @uploader, sanitized_file, uploader.identifier
+          @file = File.create! @uploader, sanitized_file, identifier
           set_file_properties
         end
 

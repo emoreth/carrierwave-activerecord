@@ -28,7 +28,10 @@ module CarrierWave
         let(:identifier)          { '/uploads/sample.png' }
         let(:active_record_file)  { double 'ActiveRecordFile stored.', file_properties.merge(save!: nil, update: nil) }
         let(:file_to_store)       { double 'File to store.',           file_properties.merge(save!: nil) }
-        let(:file_properties)     { { medium_hash:      '/uploads/sample.png',
+        let(:file_properties)     { { original_filename: 'o_sample.png',
+                                      content_type:      'image/png',
+                                      medium_hash:      '/uploads/sample.png',
+                                      size:              123,
                                       binary:            'File content.',
                                       read:              'File content.' } }
 
@@ -86,8 +89,11 @@ module CarrierWave
             it                      { should     be_instance_of provider_file_class }
             it                      { should_not be_blank }
             its(:read)              { should eq 'File content.' }
+            its(:size)              { should eq 123 }
             its(:file)              { should eq @stored_file }
             its(:identifier)        { should eq identifier }
+            its(:content_type)      { should eq 'image/png' }
+            its(:original_filename) { should eq 'o_sample.png' }
             its(:delete)            { should be_truthy }
 
             let(:retrieved_file) { File.fetch! identifier }
@@ -96,6 +102,10 @@ module CarrierWave
               expect { retrieved_file.delete }.to change( ActiveRecordFile, :count).by(-1)
             end
 
+            it 'sets the content type' do
+              retrieved_file.content_type = 'text/plain'
+              expect(retrieved_file.content_type).to eq('text/plain')
+            end
           end
 
 
